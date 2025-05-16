@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheDrinkHub_DWEB", "TheDrinkHub_DWEB\TheDrinkHub_DWEB.csproj", "{EC517F0C-304D-444E-98BB-9ADBFEED440B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC517F0C-304D-444E-98BB-9ADBFEED440B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC517F0C-304D-444E-98BB-9ADBFEED440B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC517F0C-304D-444E-98BB-9ADBFEED440B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC517F0C-304D-444E-98BB-9ADBFEED440B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CAF5DD07-7E5F-481E-B32C-B05B04659205}
+	EndGlobalSection
+EndGlobal
