@@ -28,8 +28,22 @@ public class HomeController : Controller
     }
     
     // GET
-    public async Task<IActionResult> CategoriaMain()
+    public async Task<IActionResult> CategoriaMain(Guid id)
     {
-        return View(await _context.Produtos.ToListAsync());
+        var categoria = await _context.Categorias.FindAsync(id);
+        if (categoria == null)
+            return NotFound();
+
+        ViewBag.Categorias = await _context.Categorias.ToListAsync();
+        ViewBag.CategoriaSelecionada = categoria.Nome;
+
+        var produtos = await _context.ProdutoCategorias
+            .Where(pc => pc.CategoriaId == id)
+            .Include(pc => pc.Produto)
+            .Select(pc => pc.Produto)
+            .ToListAsync();
+
+        return View("CategoriaMain", produtos);
     }
+
 }
