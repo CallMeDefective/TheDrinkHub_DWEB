@@ -1,37 +1,67 @@
-﻿namespace TheDrinkHub_DWEB.Models
+namespace TheDrinkHub_DWEB.Models
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
+    /// <summary>
+    /// Representa um produto disponível para venda.
+    /// </summary>
     public class Produto
     {
-        // Propriedade Id (chave primária)
-        public int Id { get; set; }
+        public Produto()
+        {
+            Categorias = new HashSet<ProdutoCategoria>();
+            ItensEncomenda = new HashSet<ItemEncomenda>();
+        }
 
-        // Propriedade Nome
-        [Required]
-        [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]
-        public string Nome { get; set; }
+        /// <summary>
+        /// Identificador único do produto.
+        /// </summary>
+        public Guid Id { get; set; }
 
-        // Propriedade Preço
+        /// <summary>
+        /// Nome do produto.
+        /// </summary>
         [Required]
-        [Range(0.01, 10000, ErrorMessage = "O preço deve ser maior que zero.")]
+        [Display(Name = "Nome")]
+        public string Nome { get; set; } = null!;
+
+        /// <summary>
+        /// Descrição do produto.
+        /// </summary>
+        [Display(Name = "Descrição")]
+        public string? Descricao { get; set; }
+
+        /// <summary>
+        /// Preço do produto.
+        /// </summary>
+        [Required]
+        [Display(Name = "Preço")]
         public decimal Preco { get; set; }
 
-        // Propriedade Descrição
-        [StringLength(1000, ErrorMessage = "A descrição deve ter no máximo 1000 caracteres.")]
-        public string Descricao { get; set; }
+        /// <summary>
+        /// Quantidade em stock.
+        /// </summary>
+        [Required]
+        [Range(0, int.MaxValue)]
+        [Display(Name = "Stock")]
+        public int Stock { get; set; }
 
-        // Propriedade Imagem (pode ser o caminho para o ficheiro da imagem)
-        [StringLength(255)]
-        public string Imagem { get; set; }
+        /// <summary>
+        /// Caminho para a imagem do produto.
+        /// </summary>
+        [Display(Name = "Imagem")]
+        public string? ImagemUrl { get; set; }
 
-        // Propriedade IdCategoria (FK - chave estrangeira para a Categoria)
-        [ForeignKey("Categoria")]
-        public int IdCategoria { get; set; }
+        /// <summary>
+        /// Relação com as categorias do produto.
+        /// </summary>
+        public ICollection<ProdutoCategoria> Categorias { get; set; }
 
-        // Propriedade Categoria (navegação para a Categoria)
-        public Categoria Categoria { get; set; }
+        /// <summary>
+        /// Itens de encomenda que incluem este produto.
+        /// </summary>
+        public ICollection<ItemEncomenda> ItensEncomenda { get; set; }
     }
 
 }
