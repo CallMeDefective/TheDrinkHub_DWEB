@@ -1,0 +1,110 @@
+﻿@model IEnumerable<Produto>
+@{
+    ViewData["Title"] = "Categoria";
+    var nomeCategoria = ViewBag.CategoriaSelecionada as string;
+    Layout = "";
+}
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@nomeCategoria - The Drink Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+</head>
+<body class="bg-gray-50">
+
+<!-- Navbar -->
+<nav class="bg-red-600 p-4 flex justify-between items-center fixed top-0 left-0 w-full z-50">
+    <div class="text-white cursor-pointer" id="menu-toggle">
+        <i class="fas fa-bars text-2xl"></i>
+    </div>
+    <div class="text-white text-xl font-semibold text-center flex-1">The Drink Hub</div>
+    <div class="text-white">
+        <i class="fas fa-user-circle text-2xl"></i>
+    </div>
+</nav>
+
+<!-- Sidebar Menu -->
+<div id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white shadow transform -translate-x-full transition-transform duration-300 z-40">
+    <div class="p-4 border-b font-bold text-lg">Menu</div>
+    <ul class="p-4 space-y-4">
+        <li>
+            <a asp-controller="Home" asp-action="Main" class="text-red-600 font-semibold">Início</a>
+        </li>
+        @foreach (var categoria in ViewBag.Categorias as List<Categoria>)
+        {
+            <li>
+                <a asp-controller="Home" asp-action="CategoriaMain" asp-route-id="@categoria.Id" class="text-gray-700">
+                    @categoria.Nome
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+
+<!-- Conteúdo -->
+<div class="pt-20 container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold text-center mb-8 text-red-600">@nomeCategoria</h2>
+
+    @if (!Model.Any())
+    {
+        <p class="text-center text-gray-500">Sem produtos disponíveis nesta categoria.</p>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            @foreach (var produto in Model)
+            {
+                <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                    <img src="@produto.ImagemUrl" alt="@produto.Nome" class="w-full h-48 object-contain mx-auto">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold mb-2">@produto.Nome</h3>
+
+                        <div class="flex items-center space-x-2 mt-2">
+                            <input type="text" class="border rounded p-1 w-20" value="1" id="quantidade"
+                                   min="1" max="@produto.Stock" oninput="validateInput(this)" />
+
+                            <script>
+                                function validateInput(input) {
+                                    // Remover qualquer caractere que não seja número
+                                    input.value = input.value.replace(/[^0-9]/g, '');
+
+                                    // Garantir que o valor não seja menor que o mínimo
+                                    if (parseInt(input.value) < parseInt(input.min)) {
+                                        input.value = input.min;  // Forçar o valor para o mínimo
+                                    }
+
+                                    // Garantir que o valor não ultrapasse o máximo
+                                    if (parseInt(input.value) > parseInt(input.max)) {
+                                        input.value = input.max;  // Forçar o valor para o máximo
+                                    }
+                                }
+                            </script>
+
+                            <button class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 transition flex-grow">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- Sidebar Toggle Script -->
+<script>
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('-translate-x-full');
+    });
+</script>
+
+</body>
+</html>
