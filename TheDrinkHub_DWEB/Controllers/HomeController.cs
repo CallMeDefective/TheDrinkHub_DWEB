@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TheDrinkHub_DWEB.Data;
@@ -8,10 +9,12 @@ namespace TheDrinkHub_DWEB.Controllers;
 public class HomeController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
     
-    public HomeController(ApplicationDbContext context)
+    public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
     
     // GET
@@ -44,6 +47,22 @@ public class HomeController : Controller
             .ToListAsync();
 
         return View("CategoriaMain", produtos);
+    }
+    
+    public async Task<IActionResult> PerfilMain()
+    {
+        if (User.Identity.IsAuthenticated)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+    
+            // Passar o objeto user para a vista
+            return View(user);
+        }
+        return RedirectToPage("/Account/Login", new { area = "Identity" });
     }
 
 }

@@ -99,6 +99,21 @@ namespace TheDrinkHub_DWEB.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+            
+            [Required]
+            [Display(Name = "Nome")]
+            public string Nome { get; set; }
+            
+            [Required]
+            [Display(Name = "Morada")]
+            public string Morada { get; set; }
+            
+            [Display(Name = "Nif")]
+            public string? Nif { get; set; }
+            
+            [Display(Name = "Data de Nascimento")]
+
+            public DateTime DataNascimento { get; set; }
         }
 
 
@@ -116,6 +131,10 @@ namespace TheDrinkHub_DWEB.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+                user.Nome = Input.Nome;
+                user.Morada = Input.Morada;
+                user.Nif = Input.Nif;
+                user.DataNascimento = Input.DataNascimento;
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
