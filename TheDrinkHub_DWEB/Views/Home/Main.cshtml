@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Página Inicial";
-    Layout = "";
+    Layout = "LayoutMain";
 }
 <!DOCTYPE html>
 <html lang="pt">
@@ -54,44 +54,6 @@
 </head>
 <body class="relative">
 
-<!-- Menu Lateral -->
-<div id="sideMenu" class="fixed top-0 left-0 h-full w-64 bg-white shadow transform -translate-x-full transition-transform duration-300 z-50">
-    <div class="p-4 border-b flex justify-between items-center">
-        <span class="font-bold text-lg">Menu</span>
-        <button onclick="toggleMenu()" class="text-gray-600 text-xl">&times;</button>
-    </div>
-    <ul class="p-4 space-y-4">
-        <li><a asp-controller="Home" asp-action="Main" class="text-red-600 font-semibold">Início</a></li>
-        @if (ViewBag.Categorias != null)
-        {
-            foreach (var categoria in ViewBag.Categorias)
-            {
-                <li>
-                    <a asp-controller="Home" asp-action="CategoriaMain" asp-route-id="@categoria.Id" class="text-gray-700">
-                        @categoria.Nome
-                    </a>
-                </li>
-            }
-        }
-    </ul>
-</div>
-
-<!-- Overlay -->
-<div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-40" onclick="toggleMenu()"></div>
-
-<!-- Navbar -->
-<nav class="bg-red-600 h-16 px-4 flex justify-between items-center fixed top-0 left-0 w-full z-50">
-    <button onclick="toggleMenu()" class="text-white text-2xl">
-        <i class="fas fa-bars"></i>
-    </button>
-    <div class="text-white text-xl font-semibold text-center absolute left-1/2 transform -translate-x-1/2">
-        The Drink Hub
-    </div>
-    <div class="text-white">
-        <i class="fas fa-user-circle text-2xl"></i>
-    </div>
-</nav>
-
 <!-- Carousel -->
 <div class="relative w-full max-h-[600px] overflow-hidden mt-14">
     <div class="carousel-inner">
@@ -128,7 +90,7 @@
                     <div class="text-lg font-semibold">@produto.Nome</div>
                     <div class="mt-2">
                         <input type="text" class="border rounded p-1 w-20" value="1" id="quantidade"
-                               min="1" max="@produto.Stock" oninput="validateInput(this)" />
+                               min="1" max="@produto.Stock" oninput="validateInput(this)"/>
 
                         <script>
                             function validateInput(input) {
@@ -186,22 +148,5 @@
 
     updateCarousel(currentIndex);
 </script>
-
-<!-- Menu Script -->
-<script>
-    function toggleMenu() {
-        const menu = document.getElementById('sideMenu');
-        const overlay = document.getElementById('overlay');
-        const isOpen = !menu.classList.contains('-translate-x-full');
-        if (isOpen) {
-            menu.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        } else {
-            menu.classList.remove('-translate-x-full');
-            overlay.classList.remove('hidden');
-        }
-    }
-</script>
-
 </body>
 </html>

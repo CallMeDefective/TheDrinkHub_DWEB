@@ -26,7 +26,7 @@ public class Encomenda
     /// <summary>
     /// Utilizador que fez a encomenda.
     /// </summary>
-    public IdentityUser Utilizador { get; set; } = null!;
+    public ApplicationUser Utilizador { get; set; } = null!;
 
     /// <summary>
     /// Data da encomenda.

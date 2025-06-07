@@ -1,0 +1,107 @@
+@model TheDrinkHub_DWEB.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "Perfil de Utilizador";
+    Layout = "LayoutMain";
+}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Utilizador</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <style>
+        .profile-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .profile-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 500px;
+            text-align: center;
+        }
+
+        .profile-card h2 {
+            margin-bottom: 20px;
+        }
+
+        .profile-card .info-row {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .profile-card .info-row label {
+            font-weight: bold;
+        }
+
+        .profile-card .info-row p {
+            color: #333;
+        }
+
+        .edit-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Perfil do Utilizador -->
+<div class="profile-container pt-24">
+    <div class="profile-card">
+        <h2 class="text-2xl font-semibold">Perfil de Utilizador</h2>
+
+        <div class="info-row">
+            <label for="username">Nome de Utilizador:</label>
+            <p id="username">@Model.UserName</p>
+        </div>
+        <div class="info-row">
+            <label for="email">Email:</label>
+            <p id="email">@Model.Email</p>
+        </div>
+        <div class="info-row">
+            <label for="nome">Nome Completo:</label>
+            <p id="nome">@Model.Nome</p>
+        </div>
+        <div class="info-row">
+            <label for="dataNascimento">Data de Nascimento:</label>
+            <p id="dataNascimento">@Model.DataNascimento.ToString("dd/MM/yyyy")</p>
+        </div>
+        <div class="info-row">
+            <label for="nif">NIF:</label>
+            <p id="nif">@Model.Nif</p>
+        </div>
+        <div class="info-row">
+            <label for="morada">Morada:</label>
+            <p id="morada">@Model.Morada</p>
+        </div>
+        <div>
+            <!-- Botão para editar o perfil -->
+            <a href="@Url.Action("Edit", "User")" class="edit-button">
+                <i class="fas fa-edit"></i> Editar Perfil
+            </a>
+        </div>
+        <div class="mt-5">
+            <!-- Botão para terminar a sessão -->
+            <a href="@Url.Action("Logout", "Home")" class="edit-button mt-10" style="background-color: orangered !important;">
+                <i class="fas fa-sign-out-alt"></i> Terminar Sessão
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+</body>
+</html>
