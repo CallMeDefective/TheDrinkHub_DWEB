@@ -87,11 +87,19 @@
             <label for="morada">Morada:</label>
             <p id="morada">@Model.Morada</p>
         </div>
-
-        <!-- Botão para editar o perfil -->
-        <a href="@Url.Action("Edit", "User")" class="edit-button">
-            <i class="fas fa-edit"></i> Editar Perfil
-        </a>
+        <div>
+            <!-- Botão para editar o perfil -->
+            <a href="@Url.Action("Edit", "User")" class="edit-button">
+                <i class="fas fa-edit"></i> Editar Perfil
+            </a>
+        </div>
+        <div class="mt-5">
+            <!-- Botão para terminar a sessão -->
+            <a href="@Url.Action("Logout", "Home")" class="edit-button mt-10" style="background-color: orangered !important;">
+                <i class="fas fa-sign-out-alt"></i> Terminar Sessão
+            </a>
+        </div>
+        
     </div>
 </div>
 

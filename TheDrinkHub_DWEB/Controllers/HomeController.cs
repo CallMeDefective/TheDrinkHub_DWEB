@@ -10,11 +10,13 @@ public class HomeController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     
-    public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
     {
         _context = context;
         _userManager = userManager;
+        _signInManager = signInManager;
     }
     
     // GET
@@ -63,6 +65,12 @@ public class HomeController : Controller
             return View(user);
         }
         return RedirectToPage("/Account/Login", new { area = "Identity" });
+    }
+    
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return RedirectToAction("Main", "Home"); // Redireciona para a página inicial (ou para onde preferir)
     }
 
 }
