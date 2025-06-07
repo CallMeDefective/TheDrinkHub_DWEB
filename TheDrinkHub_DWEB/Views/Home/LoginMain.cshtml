@@ -1,0 +1,47 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Iniciar Sessão";
+    Layout = "LayoutMain";
+}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sessão</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-100">
+
+<div class="flex items-center justify-center min-h-screen">
+    <div class="bg-white shadow-lg rounded-lg w-full max-w-md p-8">
+        <h2 class="text-2xl font-semibold text-center mb-6">Iniciar Sessão</h2>
+
+        <form asp-action="LoginMain" method="post" class="space-y-4">
+            <div>
+                <label asp-for="Email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input asp-for="Email" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+                <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Password" class="block text-sm font-medium text-gray-700">Palavra-passe</label>
+                <input asp-for="Password" type="password" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+                <span asp-validation-for="Password" class="text-red-500 text-sm"></span>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+                <i class="fas fa-sign-in-alt mr-2"></i> Entrar
+            </button>
+        </form>
+
+        <p class="mt-4 text-center text-sm text-gray-600">
+            Ainda não tem conta?
+            <a href="@Url.Action("RegisterMain", "Home")" class="text-blue-500 hover:underline">Registe-se aqui</a>
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
