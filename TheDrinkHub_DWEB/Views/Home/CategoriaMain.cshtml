@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Categoria";
     var nomeCategoria = ViewBag.CategoriaSelecionada as string;
-    Layout = "";
+    Layout = "LayoutMain";
 }
 
 <!DOCTYPE html>
@@ -15,36 +15,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 </head>
 <body class="bg-gray-50">
-
-<!-- Navbar -->
-<nav class="bg-red-600 p-4 flex justify-between items-center fixed top-0 left-0 w-full z-50">
-    <div class="text-white cursor-pointer" id="menu-toggle">
-        <i class="fas fa-bars text-2xl"></i>
-    </div>
-    <div class="text-white text-xl font-semibold text-center flex-1">The Drink Hub</div>
-    <div class="text-white">
-        <i class="fas fa-user-circle text-2xl"></i>
-    </div>
-</nav>
-
-<!-- Sidebar Menu -->
-<div id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white shadow transform -translate-x-full transition-transform duration-300 z-40">
-    <div class="p-4 border-b font-bold text-lg">Menu</div>
-    <ul class="p-4 space-y-4">
-        <li>
-            <a asp-controller="Home" asp-action="Main" class="text-red-600 font-semibold">Início</a>
-        </li>
-        @foreach (var categoria in ViewBag.Categorias as List<Categoria>)
-        {
-            <li>
-                <a asp-controller="Home" asp-action="CategoriaMain" asp-route-id="@categoria.Id" class="text-gray-700">
-                    @categoria.Nome
-                </a>
-            </li>
-        }
-    </ul>
-</div>
-
 <!-- Conteúdo -->
 <div class="pt-20 container mx-auto px-4 py-8">
     <h2 class="text-3xl font-bold text-center mb-8 text-red-600">@nomeCategoria</h2>
@@ -95,16 +65,6 @@
         </div>
     }
 </div>
-
-<!-- Sidebar Toggle Script -->
-<script>
-    const menuToggle = document.getElementById('menu-toggle');
-    const sidebar = document.getElementById('sidebar');
-
-    menuToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('-translate-x-full');
-    });
-</script>
 
 </body>
 </html>
