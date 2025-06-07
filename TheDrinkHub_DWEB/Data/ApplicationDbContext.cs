@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TheDrinkHub_DWEB.Models;
 
 namespace TheDrinkHub_DWEB.Data;
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
