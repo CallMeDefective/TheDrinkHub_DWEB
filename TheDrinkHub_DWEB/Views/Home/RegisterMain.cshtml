@@ -1,0 +1,82 @@
+@model TheDrinkHub_DWEB.Views.Home.RegisterViewModel
+@{
+    ViewData["Title"] = "Registo de Utilizador";
+    Layout = "LayoutMain";
+}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registar</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-100">
+
+<div class="flex items-center justify-center min-h-screen pt-24">
+    <div class="bg-white shadow-lg rounded-lg w-full max-w-lg p-8">
+        <h2 class="text-2xl font-semibold text-center mb-6">Criar Conta</h2>
+
+        <form asp-action="RegisterMain" method="post" class="space-y-4">
+            <div>
+                <label asp-for="UserName" class="block text-sm font-medium text-gray-700">Nome de Utilizador</label>
+                <input asp-for="UserName" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+                <span asp-validation-for="UserName" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input asp-for="Email" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+                <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Password" class="block text-sm font-medium text-gray-700">Palavra-passe</label>
+                <input asp-for="Password" type="password" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+                <span asp-validation-for="Password" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="ConfirmPassword" class="block text-sm font-medium text-gray-700">Confirmar Palavra-passe</label>
+                <input asp-for="ConfirmPassword" type="password" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+                <span asp-validation-for="ConfirmPassword" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Nome" class="block text-sm font-medium text-gray-700">Nome Completo</label>
+                <input asp-for="Nome" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+                <span asp-validation-for="Nome" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="DataNascimento" class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
+                <input asp-for="DataNascimento" type="date" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+                <span asp-validation-for="DataNascimento" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Nif" class="block text-sm font-medium text-gray-700">NIF (opcional)</label>
+                <input asp-for="Nif" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+                <span asp-validation-for="Nif" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Morada" class="block text-sm font-medium text-gray-700">Morada</label>
+                <input asp-for="Morada" class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" />
+                <span asp-validation-for="Morada" class="text-red-500 text-sm"></span>
+            </div>
+
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded">
+                <i class="fas fa-user-plus mr-2"></i> Registar
+            </button>
+        </form>
+
+        <p class="mt-4 text-center text-sm text-gray-600">
+            Já tem conta? <a href="@Url.Action("LoginMain", "Home")" class="text-blue-500 hover:underline">Entrar</a>
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
