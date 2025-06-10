@@ -1,18 +1,40 @@
-﻿namespace TheDrinkHub_DWEB.Models
+namespace TheDrinkHub_DWEB.Models
 {
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
+    /// <summary>
+    /// Representa uma categoria de produtos.
+    /// </summary>
     public class Categoria
     {
-        public int Id { get; set; }
+        public Categoria()
+        {
+            Produtos = new HashSet<ProdutoCategoria>();
+        }
 
+        /// <summary>
+        /// Identificador único da categoria.
+        /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Nome da categoria.
+        /// </summary>
         [Required]
-        [StringLength(100, ErrorMessage = "O nome da categoria deve ter no máximo 100 caracteres.")]
-        public string Nome { get; set; }
+        [Display(Name = "Nome")]
+        public string Nome { get; set; } = null!;
 
-        // Lista de produtos relacionados
-        public List<Produto> Produtos { get; set; }
+        /// <summary>
+        /// Descrição da categoria.
+        /// </summary>
+        [Display(Name = "Descrição")]
+        public string? Descricao { get; set; }
+
+        /// <summary>
+        /// Relação com os produtos associados.
+        /// </summary>
+        public ICollection<ProdutoCategoria> Produtos { get; set; }
     }
 
 }
