@@ -21,9 +21,15 @@ namespace TheDrinkHub_DWEB.Controllers
         }
 
         // GET
+        public IActionResult BO()
+        {
+            return View("Index");
+        }
+        
+        // GET
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Main", "Home");
         }
         
         // GET
