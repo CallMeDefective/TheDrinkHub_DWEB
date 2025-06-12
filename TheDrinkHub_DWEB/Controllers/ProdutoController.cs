@@ -22,7 +22,11 @@ namespace TheDrinkHub_DWEB.Controllers
         // GET: Produto
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Produtos.ToListAsync());
+            var produtos = await _context.Produtos
+                .Include(p => p.Categorias)
+                .ThenInclude(pc => pc.Categoria)
+                .ToListAsync();
+            return View(produtos);
         }
 
         // GET: Produto/Details/5
@@ -34,7 +38,9 @@ namespace TheDrinkHub_DWEB.Controllers
             }
 
             var produto = await _context.Produtos
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(p => p.Categorias)
+                .ThenInclude(pc => pc.Categoria) // importante!
+                .FirstOrDefaultAsync(p => p.Id == id);
             if (produto == null)
             {
                 return NotFound();
@@ -43,43 +49,88 @@ namespace TheDrinkHub_DWEB.Controllers
             return View(produto);
         }
 
-        // GET: Produto/Create
+        [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            var viewModel = new ProdutoCreateViewModel
+            {
+                Categorias = _context.Categorias
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Nome
+                    }).ToList()
+            };
+
+            return View(viewModel);
         }
 
-        // POST: Produto/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Descricao,Preco,Stock,ImagemUrl")] Produto produto)
+        public async Task<IActionResult> Create(ProdutoCreateViewModel model)
         {
+            ModelState.Remove("Categorias");
             if (ModelState.IsValid)
             {
-                produto.Id = Guid.NewGuid();
-                _context.Add(produto);
+                var produto = new Produto
+                {
+                    Nome = model.Nome,
+                    Descricao = model.Descricao,
+                    Preco = model.Preco,
+                    Stock = model.Stock,
+                    ImagemUrl = model.ImagemUrl,
+                    Categorias = model.SelectedCategorias
+                        .Select(categoriaId => new ProdutoCategoria
+                        {
+                            CategoriaId = categoriaId
+                        }).ToList()
+                };
+
+                _context.Produtos.Add(produto);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(produto);
+            
+            model.Categorias = _context.Categorias
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Nome
+                }).ToList();
+
+            return View(model);
         }
 
-        // GET: Produto/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var produto = await _context.Produtos.FindAsync(id);
+        // GET: Produto/Edit/5
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var produto = await _context.Produtos
+                .Include(p => p.Categorias)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
             if (produto == null)
-            {
                 return NotFound();
-            }
-            return View(produto);
+
+            var viewModel = new ProdutoEditViewModel
+            {
+                Id = produto.Id,
+                Nome = produto.Nome,
+                Descricao = produto.Descricao,
+                Preco = produto.Preco,
+                Stock = produto.Stock,
+                ImagemUrl = produto.ImagemUrl,
+                SelectedCategorias = produto.Categorias.Select(pc => pc.CategoriaId).ToList(),
+                Categorias = await _context.Categorias
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Nome
+                    }).ToListAsync()
+            };
+
+            return View(viewModel);
         }
 
         // POST: Produto/Edit/5
@@ -87,35 +138,50 @@ namespace TheDrinkHub_DWEB.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nome,Descricao,Preco,Stock,ImagemUrl")] Produto produto)
+        public async Task<IActionResult> Edit(ProdutoEditViewModel model)
         {
-            if (id != produto.Id)
+            ModelState.Remove("Categorias");
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                model.Categorias = await _context.Categorias
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Nome
+                    }).ToListAsync();
+
+                return View(model);
             }
 
-            if (ModelState.IsValid)
+            var produto = await _context.Produtos
+                .Include(p => p.Categorias)
+                .FirstOrDefaultAsync(p => p.Id == model.Id);
+
+            if (produto == null)
+                return NotFound();
+
+            produto.Nome = model.Nome;
+            produto.Descricao = model.Descricao;
+            produto.Preco = model.Preco;
+            produto.Stock = model.Stock;
+            produto.ImagemUrl = model.ImagemUrl;
+
+            // Atualizar categorias
+            produto.Categorias.Clear();
+            foreach (var categoriaId in model.SelectedCategorias)
             {
-                try
+                produto.Categorias.Add(new ProdutoCategoria
                 {
-                    _context.Update(produto);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProdutoExists(produto.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                    ProdutoId = produto.Id,
+                    CategoriaId = categoriaId
+                });
             }
-            return View(produto);
+
+            _context.Update(produto);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
+
 
         // GET: Produto/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
@@ -126,7 +192,9 @@ namespace TheDrinkHub_DWEB.Controllers
             }
 
             var produto = await _context.Produtos
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(p => p.Categorias)
+                .ThenInclude(pc => pc.Categoria) // importante!
+                .FirstOrDefaultAsync(p => p.Id == id);
             if (produto == null)
             {
                 return NotFound();

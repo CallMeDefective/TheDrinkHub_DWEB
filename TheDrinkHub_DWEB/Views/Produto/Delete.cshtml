@@ -41,6 +41,24 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ImagemUrl)
         </dd>
+        <dt class="col-sm-2">
+            Categorias
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Categorias != null && Model.Categorias.Any())
+            {
+                <ul>
+                    @foreach (var pc in Model.Categorias)
+                    {
+                        <li>@pc.Categoria.Nome</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span>(Nenhuma categoria associada)</span>
+            }
+        </dd>
     </dl>
     
     <form asp-action="Delete">
