@@ -22,6 +22,11 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     options.SignIn.RequireConfirmedAccount = false
 ).AddEntityFrameworkStores<ApplicationDbContext>();
 
+// Adiciona HTTP Client para requests à API
+builder.Services.AddHttpClient("DefaultClient", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7161/");
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
