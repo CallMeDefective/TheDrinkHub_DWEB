@@ -1,133 +1,137 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Win32;
-using TheDrinkHub_DWEB.Data;
 using TheDrinkHub_DWEB.Models;
+using System.Net.Http;
+using System.Text.Json;
 using TheDrinkHub_DWEB.Views.Home;
 
-namespace TheDrinkHub_DWEB.Controllers;
-
-public class HomeController : Controller
+namespace TheDrinkHub_DWEB.Controllers
 {
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly IUserStore<ApplicationUser> _userStore;
-    
+    public class HomeController : Controller
+    {
+        private readonly HttpClient _httpClient;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-    
-    public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IUserStore<ApplicationUser> userStore)
-    {
-        _context = context;
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _userStore = userStore;
-    }
-    
-    // GET
-    public IActionResult Index()
-    {
-        return View();
-    }
-    
-    // GET
-    public async Task<IActionResult> Main()
-    {
-        ViewBag.Categorias = await _context.Categorias.ToListAsync();
-        return View(await _context.Produtos.ToListAsync());
-    }
-    
-    // GET
-    public async Task<IActionResult> CategoriaMain(Guid id)
-    {
-        var categoria = await _context.Categorias.FindAsync(id);
-        if (categoria == null)
-            return NotFound();
-
-        ViewBag.Categorias = await _context.Categorias.ToListAsync();
-        ViewBag.CategoriaSelecionada = categoria.Nome;
-
-        var produtos = await _context.ProdutoCategorias
-            .Where(pc => pc.CategoriaId == id)
-            .Include(pc => pc.Produto)
-            .Select(pc => pc.Produto)
-            .ToListAsync();
-
-        return View("CategoriaMain", produtos);
-    }
-    
-    public async Task<IActionResult> PerfilMain()
-    {
-        if (User.Identity.IsAuthenticated)
+        public HomeController(IHttpClientFactory httpClientFactory, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return NotFound();
-            }
-    
-            // Passar o objeto user para a vista
-            return View(user);
+            _httpClient = httpClientFactory.CreateClient("DefaultClient");
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
-        return RedirectToPage("/Account/Login", new { area = "Identity" });
-    }
-    
-    public async Task<IActionResult> Logout()
-    {
-        await _signInManager.SignOutAsync();
-        return RedirectToAction("Main", "Home"); // Redireciona para a página inicial (ou para onde preferir)
-    }
-    
-    
-    public IActionResult LoginMain()
-    {
-        return View();
-    }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> LoginMain(LoginViewModel model)
-    {
-        var user = await _userManager.FindByEmailAsync(model.Email);
-        var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, true, lockoutOnFailure: false);
-        if (result.Succeeded)
+        // GET
+        public IActionResult Index()
         {
+            return View();
+        }
+        
+        // GET
+        public IActionResult LoginMain()
+        {
+            return View();
+        }
+
+        // GET
+        public async Task<IActionResult> Main()
+        {
+            var response = await _httpClient.GetAsync("api/Api/categorias");
+            if (response.IsSuccessStatusCode)
+            {
+                var categorias = await response.Content.ReadFromJsonAsync<List<Categoria>>();
+                ViewBag.Categorias = categorias;
+            }
+
+            response = await _httpClient.GetAsync("api/Api/produtos");
+            if (response.IsSuccessStatusCode)
+            {
+                var produtos = await response.Content.ReadFromJsonAsync<List<Produto>>();
+                return View(produtos);
+            }
+
+            return View();
+        }
+
+        // GET
+        public async Task<IActionResult> CategoriaMain(Guid id)
+        {
+            var response = await _httpClient.GetAsync($"api/Api/categoria/{id}");
+            if (!response.IsSuccessStatusCode)
+                return NotFound();
+
+            var produtos = await response.Content.ReadFromJsonAsync<List<Produto>>();
+            ViewBag.Categorias = await _httpClient.GetFromJsonAsync<List<Categoria>>("api/Api/categorias");
+            return View("CategoriaMain", produtos);
+        }
+
+        // GET
+        public async Task<IActionResult> PerfilMain()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var response = await _httpClient.GetAsync($"api/Api/perfil?userId={user?.Id}");
+
+                if (!response.IsSuccessStatusCode)
+                    return NotFound();
+
+                var perfil = await response.Content.ReadFromJsonAsync<ApplicationUser>();
+                return View(perfil);
+            }
+
+            return RedirectToPage("/Account/Login", new { area = "Identity" });
+        }
+
+        // POST - Login
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoginMain(LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, isPersistent: true, lockoutOnFailure: false);
+                if (result.Succeeded)
+                    return RedirectToAction("Main", "Home");
+            }
+
+            ModelState.AddModelError("Email", "Dados incorretos");
+            return View(model);
+        }
+
+        // GET - Registo
+        public IActionResult RegisterMain() => View();
+
+        // POST - Registo
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterMain(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+                return RedirectToAction("LoginMain", "Home");
+
+            foreach (var error in result.Errors)
+                ModelState.AddModelError("", error.Description);
+
+            return View(model);
+        }
+
+        // POST - Logout
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Main", "Home");
         }
-        else
-        {
-            ModelState.AddModelError("Email", "Dados incorretos");
-        }
-        return View(model);
-    }
-
-    public IActionResult RegisterMain()
-    {
-        return View();
-    }
-    
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> RegisterMain(RegisterViewModel model)
-    {
-        var user = Activator.CreateInstance<ApplicationUser>();
-        user.Nome = model.Nome;
-        user.Morada = model.Morada;
-        user.Nif = model.Nif;
-        user.DataNascimento = model.DataNascimento;
-        user.UserName = model.UserName;
-        user.Email = model.Email;
-        await _userStore.SetUserNameAsync(user, user.UserName, CancellationToken.None);
-        var result = await _userManager.CreateAsync(user, model.Password);
-
-        if (result.Succeeded)
-        {
-            var userId = await _userManager.GetUserIdAsync(user);
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            return RedirectToAction("LoginMain", "Home");
-        }
-        return RedirectToAction("RegisterMain", "Home");
     }
 }
