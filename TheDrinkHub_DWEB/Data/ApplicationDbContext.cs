@@ -9,10 +9,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         {
         }
 
-        /// <summary>
-        /// Tabela de produtos.
-        /// </summary>
-        public DbSet<Produto> Produtos { get; set; }
+    public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
+    /// <summary>
+    /// Tabela de produtos.
+    /// </summary>
+    public DbSet<Produto> Produtos { get; set; }
 
         /// <summary>
         /// Tabela de categorias.

@@ -119,7 +119,7 @@ namespace TheDrinkHub_DWEB.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Nome = model.Nome, Morada = model.Morada, Nif = model.Nif, DataNascimento = model.DataNascimento};
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
