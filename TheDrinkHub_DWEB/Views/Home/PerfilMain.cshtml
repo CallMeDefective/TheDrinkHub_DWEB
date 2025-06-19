@@ -95,9 +95,11 @@
         </div>
         <div class="mt-5">
             <!-- Botão para terminar a sessão -->
-            <a href="@Url.Action("Logout", "Home")" class="edit-button mt-10" style="background-color: orangered !important;">
-                <i class="fas fa-sign-out-alt"></i> Terminar Sessão
-            </a>
+                <form asp-action="Logout" asp-controller="Home" method="post" class="mt-5">
+                    <button type="submit" class="edit-button mt-10" style="background-color: orangered !important;">
+                        <i class="fas fa-sign-out-alt"></i> Terminar Sessão
+                    </button>
+                </form>
         </div>
         
     </div>
