@@ -4,6 +4,8 @@ using TheDrinkHub_DWEB.Models;
 using System.Net.Http;
 using System.Text.Json;
 using TheDrinkHub_DWEB.Views.Home;
+using Microsoft.AspNetCore.Authorization;
+using TheDrinkHub_DWEB.Models.ViewModels;
 
 namespace TheDrinkHub_DWEB.Controllers
 {
@@ -20,7 +22,9 @@ namespace TheDrinkHub_DWEB.Controllers
             _signInManager = signInManager;
         }
 
+
         // GET
+        [Authorize(Roles = "Admin")]
         public IActionResult BO()
         {
             return View("Index");
@@ -86,6 +90,58 @@ namespace TheDrinkHub_DWEB.Controllers
             }
 
             return RedirectToPage("/Account/Login", new { area = "Identity" });
+        }
+
+
+        // GET: Editar perfil
+        [Authorize]
+        public async Task<IActionResult> EditarPerfil()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return NotFound();
+
+            var model = new EditPerfilViewModel
+            {
+                Nome = user.Nome,
+                DataNascimento = user.DataNascimento,
+                Nif = user.Nif,
+                Morada = user.Morada
+            };
+
+            return View(model);
+        }
+
+        // POST: Editar perfil
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarPerfil(EditPerfilViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return NotFound();
+
+            user.Nome = model.Nome;
+            user.DataNascimento = model.DataNascimento;
+            user.Nif = model.Nif;
+            user.Morada = model.Morada;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                TempData["Sucesso"] = "Perfil atualizado com sucesso!";
+                return RedirectToAction("PerfilMain");
+            }
+
+            foreach (var error in result.Errors)
+                ModelState.AddModelError("", error.Description);
+
+            return View(model);
         }
 
         // POST - Login

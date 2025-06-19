@@ -49,14 +49,21 @@
         <button onclick="toggleMenu()" class="text-white text-2xl">
             <i class="fas fa-bars"></i>
         </button>
-        <div class="text-white text-xl font-semibold text-center absolute left-1/2 transform -translate-x-1/2">
+        <a asp-controller="Home" asp-action="Main" class="text-white text-xl font-semibold text-center absolute left-1/2 transform -translate-x-1/2">
             The Drink Hub
-        </div>
+        </a>
         <div class="text-white flex items-center space-x-4">
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="Home" asp-action="BO" class="bg-white text-red-600 px-3 py-1 rounded font-semibold hover:bg-gray-100 transition">
+                    Backoffice
+                </a>
+            }
             <div class="relative">
                 <i class="fas fa-shopping-cart text-2xl"></i>
                 <span id="cart-count" class="absolute -top-2 -right-2 bg-white text-red-600 rounded-full text-xs px-2">0</span>
             </div>
+
             @if (User.Identity.IsAuthenticated)
             {
                 <a asp-controller="Home" asp-action="PerfilMain">
@@ -107,5 +114,6 @@
 
         connection.start().catch(err => console.error(err.toString()));
     </script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

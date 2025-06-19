@@ -89,15 +89,17 @@
         </div>
         <div>
             <!-- Botão para editar o perfil -->
-            <a href="@Url.Action("Edit", "User")" class="edit-button">
-                <i class="fas fa-edit"></i> Editar Perfil
-            </a>
+                <a href="@Url.Action("EditarPerfil", "Home")" class="edit-button">
+                    <i class="fas fa-edit"></i> Editar Perfil
+                </a>
         </div>
         <div class="mt-5">
             <!-- Botão para terminar a sessão -->
-            <a href="@Url.Action("Logout", "Home")" class="edit-button mt-10" style="background-color: orangered !important;">
-                <i class="fas fa-sign-out-alt"></i> Terminar Sessão
-            </a>
+                <form asp-action="Logout" asp-controller="Home" method="post" class="mt-5">
+                    <button type="submit" class="edit-button mt-10" style="background-color: orangered !important;">
+                        <i class="fas fa-sign-out-alt"></i> Terminar Sessão
+                    </button>
+                </form>
         </div>
         
     </div>

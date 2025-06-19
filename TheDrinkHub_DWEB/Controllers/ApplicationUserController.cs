@@ -1,11 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TheDrinkHub_DWEB.Models;
 
 namespace TheDrinkHub_DWEB.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ApplicationUserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
