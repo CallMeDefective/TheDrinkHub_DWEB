@@ -1,0 +1,50 @@
+﻿@model List<TheDrinkHub_DWEB.Models.CarrinhoItem>
+
+@{
+    ViewData["Title"] = "Carrinho";
+    var total = ViewBag.Total ?? 0;
+}
+
+<div class="pt-20 px-4 max-w-3xl mx-auto">
+    <h2 class="text-2xl font-bold text-center mb-8">O teu Carrinho</h2>
+
+    @if (Model.Count == 0)
+    {
+        <div class="text-center text-gray-600">O carrinho está vazio.</div>
+    }
+    else
+    {
+        <div class="space-y-4">
+            @foreach (var item in Model)
+            {
+                <div class="flex items-center justify-between border p-4 rounded shadow">
+                    <div class="flex items-center space-x-4">
+                        <img src="@item.Produto.ImagemUrl" alt="@item.Produto.Nome" class="w-16 h-16 object-cover rounded" />
+                        <div>
+                            <div class="font-semibold">@item.Produto.Nome</div>
+                            <div class="text-sm text-gray-500">Quantidade: @item.Quantidade</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-6">
+                        <div class="text-lg font-bold">@((item.Produto.Preco * item.Quantidade).ToString("0.00"))€</div>
+                        <form asp-action="Remover" method="post" asp-route-id="@item.Id">
+                            <button type="submit" class="text-red-600 hover:text-red-800 text-xl">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="mt-6 text-right text-lg font-semibold">
+            Total: @((total as decimal?)?.ToString("0.00"))€
+        </div>
+
+        <form asp-action="Pagar" method="post" class="mt-4 text-center">
+            <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition">
+                Pagar
+            </button>
+        </form>
+    }
+</div>
