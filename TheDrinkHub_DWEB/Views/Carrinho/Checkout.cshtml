@@ -1,0 +1,34 @@
+﻿@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var total = ViewBag.Total;
+}
+
+<div class="container mx-auto mt-10 p-6 max-w-md bg-white shadow rounded">
+    <h2 class="text-2xl font-bold mb-4 text-center">Pagamento</h2>
+
+    <div class="mb-4 text-lg">
+        <strong>Total a pagar:</strong> @total.ToString("C")
+    </div>
+
+    <form asp-action="FinalizarPagamento" method="post">
+        <div class="mb-4">
+            <label for="cartao" class="block">Número do Cartão</label>
+            <input type="text" id="cartao" name="Cartao" required maxlength="19" class="w-full p-2 border rounded" placeholder="1234 5678 9012 3456" />
+        </div>
+
+        <div class="mb-4">
+            <label for="validade" class="block">Validade</label>
+            <input type="text" id="validade" name="Validade" required maxlength="5" class="w-full p-2 border rounded" placeholder="MM/AA" />
+        </div>
+
+        <div class="mb-4">
+            <label for="cvv" class="block">CVV</label>
+            <input type="text" id="cvv" name="CVV" required maxlength="3" class="w-full p-2 border rounded" placeholder="123" />
+        </div>
+
+        <button type="submit" class="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700 transition">
+            Pagar Agora
+        </button>
+    </form>
+</div>

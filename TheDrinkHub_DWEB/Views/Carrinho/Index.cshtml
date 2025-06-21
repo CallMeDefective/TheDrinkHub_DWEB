@@ -41,10 +41,9 @@
             Total: @((total as decimal?)?.ToString("0.00"))€
         </div>
 
-        <form asp-action="Pagar" method="post" class="mt-4 text-center">
-            <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition">
-                Pagar
-            </button>
-        </form>
+        <button type="button" onclick="window.location.href='@Url.Action("Checkout", "Carrinho")'"
+                class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition">
+            Pagar
+        </button>
     }
 </div>

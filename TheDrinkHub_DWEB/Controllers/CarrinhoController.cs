@@ -21,6 +21,7 @@ namespace TheDrinkHub_DWEB.Controllers
         }
 
         // GET: /Carrinho
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -101,5 +102,36 @@ namespace TheDrinkHub_DWEB.Controllers
             TempData["Sucesso"] = "Compra realizada com sucesso!";
             return RedirectToAction("Index", "Home");
         }
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> FinalizarPagamento(string Cartao, string Validade, string CVV)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var itens = await _context.CarrinhoItens.Where(ci => ci.UserId == userId).ToListAsync();
+
+            // Aqui validar e processar pagamento...
+
+            _context.CarrinhoItens.RemoveRange(itens);
+            await _context.SaveChangesAsync();
+
+            TempData["Mensagem"] = "Pagamento efetuado com sucesso!";
+            return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Checkout()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var itens = await _context.CarrinhoItens
+                .Include(ci => ci.Produto)
+                .Where(ci => ci.UserId == userId)
+                .ToListAsync();
+
+            ViewBag.Total = itens.Sum(i => i.Produto.Preco * i.Quantidade);
+            return View(itens);
+        }
+
     }
 }
