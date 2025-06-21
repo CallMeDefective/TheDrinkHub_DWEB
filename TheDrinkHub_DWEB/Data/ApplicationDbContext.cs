@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TheDrinkHub_DWEB.Models;
+using TheDrinkHub_DWEB.Models;
 
 namespace TheDrinkHub_DWEB.Data;
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -36,10 +37,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         /// </summary>
         public DbSet<ItemEncomenda> ItensEncomenda { get; set; }
 
-        /// <summary>
-        /// Configurações adicionais do modelo de dados.
-        /// </summary>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public DbSet<CarrinhoItem> CarrinhoItens { get; set; }
+
+    /// <summary>
+    /// Configurações adicionais do modelo de dados.
+    /// </summary>
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 

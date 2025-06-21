@@ -88,31 +88,32 @@
                 <div class="flex-shrink-0 w-48 bg-white shadow rounded-lg p-4 text-center">
                     <img src="@produto.ImagemUrl" alt="@produto.Nome" class="w-full h-40 object-cover rounded mb-2">
                     <div class="text-lg font-semibold">@produto.Nome</div>
-                    <div class="mt-2">
-                        <input type="text" class="border rounded p-1 w-20" value="1" id="quantidade"
-                               min="1" max="@produto.Stock" oninput="validateInput(this)"/>
+                        <form asp-controller="Carrinho" asp-action="Adicionar" method="post">
+                            <script>
+                                function validateInput(input) {
+                                    // Remover qualquer caractere que não seja número
+                                    input.value = input.value.replace(/[^0-9]/g, '');
 
-                        <script>
-                            function validateInput(input) {
-                                // Remover qualquer caractere que não seja número
-                                input.value = input.value.replace(/[^0-9]/g, '');
+                                    // Garantir que o valor não seja menor que o mínimo
+                                    if (parseInt(input.value) < parseInt(input.min)) {
+                                        input.value = input.min;  // Forçar o valor para o mínimo
+                                    }
 
-                                // Garantir que o valor não seja menor que o mínimo
-                                if (parseInt(input.value) < parseInt(input.min)) {
-                                    input.value = input.min;  // Forçar o valor para o mínimo
+                                    // Garantir que o valor não ultrapasse o máximo
+                                    if (parseInt(input.value) > parseInt(input.max)) {
+                                        input.value = input.max;  // Forçar o valor para o máximo
+                                    }
                                 }
+                            </script>
+                            <input type="hidden" name="produtoId" value="@produto.Id" />
 
-                                // Garantir que o valor não ultrapasse o máximo
-                                if (parseInt(input.value) > parseInt(input.max)) {
-                                    input.value = input.max;  // Forçar o valor para o máximo
-                                }
-                            }
-                        </script>
+                            <input type="number" name="quantidade" class="border rounded p-1 w-20"
+                                   value="1" min="1" max="@produto.Stock" oninput="validateInput(this)" />
 
-                        <button class="bg-blue-600 text-white p-2 rounded mt-2 text-sm w-full">
-                            <i class="fas fa-cart-plus"></i> Adicionar
-                        </button>
-                    </div>
+                            <button type="submit" class="bg-blue-600 text-white p-2 rounded mt-2 text-sm w-full">
+                                <i class="fas fa-cart-plus"></i> Adicionar
+                            </button>
+                        </form>
                 </div>
             }
         }
