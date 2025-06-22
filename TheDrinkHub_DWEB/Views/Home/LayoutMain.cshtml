@@ -60,10 +60,20 @@
                 </a>
             }
 
-            <a asp-controller="Carrinho" asp-action="Index" class="relative">
-                <i class="fas fa-shopping-cart text-2xl"></i>
-                <span id="cart-count" class="absolute -top-2 -right-2 bg-white text-red-600 rounded-full text-xs px-2"></span>
-            </a>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Carrinho" asp-action="Index" class="relative">
+                    <i class="fas fa-shopping-cart text-2xl"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-white text-red-600 rounded-full text-xs px-2"></span>
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Home" asp-action="LoginMain" class="relative">
+                    <i class="fas fa-shopping-cart text-2xl"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-white text-red-600 rounded-full text-xs px-2"></span>
+                </a>
+            }
 
 
             @if (User.Identity.IsAuthenticated)

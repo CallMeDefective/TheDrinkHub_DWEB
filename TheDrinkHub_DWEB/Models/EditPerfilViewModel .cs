@@ -19,5 +19,11 @@ namespace TheDrinkHub_DWEB.Models.ViewModels
         [Required(ErrorMessage = "A morada é obrigatória.")]
         [StringLength(200, ErrorMessage = "Máximo de 200 caracteres.")]
         public string Morada { get; set; }
+
+
+        [Required(ErrorMessage = "O email é obrigatório.")]
+        [EmailAddress(ErrorMessage = "Email inválido.")]
+        public string Email { get; set; }
     }
 }
+

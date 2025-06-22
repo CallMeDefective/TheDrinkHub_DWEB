@@ -1,43 +1,55 @@
 ﻿@model TheDrinkHub_DWEB.Models.ViewModels.EditPerfilViewModel
 
 @{
+    Layout = "~/Views/Home/LayoutMain.cshtml";
     ViewData["Title"] = "Editar Perfil";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="pt-16 max-w-md mx-auto p-6 bg-white rounded shadow mt-8">
+    <h2 class="text-2xl font-bold mb-6">@ViewData["Title"]</h2>
 
-@if (TempData["Sucesso"] != null)
-{
-    <div class="alert alert-success">@TempData["Sucesso"]</div>
-}
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+            @TempData["Sucesso"]
+        </div>
+    }
 
-<form asp-action="EditarPerfil" method="post">
-    <div class="form-group">
-        <label asp-for="Nome"></label>
-        <input asp-for="Nome" class="form-control" />
-        <span asp-validation-for="Nome" class="text-danger"></span>
-    </div>
+    <form asp-action="EditarPerfil" method="post" class="space-y-4">
+        <div>
+            <label asp-for="Nome" class="block font-semibold mb-1"></label>
+            <input asp-for="Nome" class="w-full p-2 border rounded" />
+            <span asp-validation-for="Nome" class="text-red-600 text-sm"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="DataNascimento"></label>
-        <input asp-for="DataNascimento" type="date" class="form-control" />
-        <span asp-validation-for="DataNascimento" class="text-danger"></span>
-    </div>
+        <div>
+            <label asp-for="DataNascimento" class="block font-semibold mb-1"></label>
+            <input asp-for="DataNascimento" type="date" class="w-full p-2 border rounded" />
+            <span asp-validation-for="DataNascimento" class="text-red-600 text-sm"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Nif"></label>
-        <input asp-for="Nif" class="form-control" />
-        <span asp-validation-for="Nif" class="text-danger"></span>
-    </div>
+        <div>
+            <label asp-for="Nif" class="block font-semibold mb-1"></label>
+            <input asp-for="Nif" class="w-full p-2 border rounded" />
+            <span asp-validation-for="Nif" class="text-red-600 text-sm"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Morada"></label>
-        <input asp-for="Morada" class="form-control" />
-        <span asp-validation-for="Morada" class="text-danger"></span>
-    </div>
+        <div>
+            <label asp-for="Morada" class="block font-semibold mb-1"></label>
+            <input asp-for="Morada" class="w-full p-2 border rounded" />
+            <span asp-validation-for="Morada" class="text-red-600 text-sm"></span>
+        </div>
+        <div>
+            <label asp-for="Email" class="block font-semibold mb-1"></label>
+            <input asp-for="Email" class="w-full p-2 border rounded" />
+            <span asp-validation-for="Email" class="text-red-600 text-sm"></span>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Guardar</button>
-</form>
+        <button type="submit" class="w-full bg-green-600 text-white p-2 rounded transition">
+            Guardar
+        </button>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
