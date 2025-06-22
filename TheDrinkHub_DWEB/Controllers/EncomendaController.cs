@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -24,25 +23,29 @@ namespace TheDrinkHub_DWEB.Controllers
         // GET: Encomenda
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Encomendas.Include(e => e.Utilizador);
-            return View(await applicationDbContext.ToListAsync());
+            var encomendas = await _context.Encomendas
+                .Include(e => e.Utilizador)
+                .Include(e => e.Itens)
+                    .ThenInclude(i => i.Produto)
+                .ToListAsync();
+
+            return View(encomendas);
         }
 
         // GET: Encomenda/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var encomenda = await _context.Encomendas
                 .Include(e => e.Utilizador)
+                .Include(e => e.Itens)
+                    .ThenInclude(i => i.Produto)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (encomenda == null)
-            {
                 return NotFound();
-            }
 
             return View(encomenda);
         }
@@ -50,13 +53,11 @@ namespace TheDrinkHub_DWEB.Controllers
         // GET: Encomenda/Create
         public IActionResult Create()
         {
-            ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "UserName");
             return View();
         }
 
         // POST: Encomenda/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UtilizadorId,DataEncomenda,Estado,Total")] Encomenda encomenda)
@@ -68,7 +69,7 @@ namespace TheDrinkHub_DWEB.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "Id", encomenda.UtilizadorId);
+            ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "UserName", encomenda.UtilizadorId);
             return View(encomenda);
         }
 
@@ -76,30 +77,23 @@ namespace TheDrinkHub_DWEB.Controllers
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var encomenda = await _context.Encomendas.FindAsync(id);
             if (encomenda == null)
-            {
                 return NotFound();
-            }
-            ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "Id", encomenda.UtilizadorId);
+
+            ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "UserName", encomenda.UtilizadorId);
             return View(encomenda);
         }
 
         // POST: Encomenda/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,UtilizadorId,DataEncomenda,Estado,Total")] Encomenda encomenda)
         {
             if (id != encomenda.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -111,17 +105,13 @@ namespace TheDrinkHub_DWEB.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!EncomendaExists(encomenda.Id))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "Id", encomenda.UtilizadorId);
+            ViewData["UtilizadorId"] = new SelectList(_context.Users, "Id", "UserName", encomenda.UtilizadorId);
             return View(encomenda);
         }
 
@@ -129,17 +119,14 @@ namespace TheDrinkHub_DWEB.Controllers
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var encomenda = await _context.Encomendas
                 .Include(e => e.Utilizador)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (encomenda == null)
-            {
                 return NotFound();
-            }
 
             return View(encomenda);
         }
@@ -153,9 +140,8 @@ namespace TheDrinkHub_DWEB.Controllers
             if (encomenda != null)
             {
                 _context.Encomendas.Remove(encomenda);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

@@ -59,6 +59,26 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .HasOne(pc => pc.Categoria)
                 .WithMany(c => c.Produtos)
                 .HasForeignKey(pc => pc.CategoriaId);
-        }
 
+        // Relacionamento Encomenda - ApplicationUser (Utilizador)
+        modelBuilder.Entity<Encomenda>()
+            .HasOne(e => e.Utilizador)
+            .WithMany(u => u.Encomendas)  // certifica que ApplicationUser tem ICollection<Encomenda> Encomendas
+            .HasForeignKey(e => e.UtilizadorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Relacionamento ItemEncomenda - Encomenda
+        modelBuilder.Entity<ItemEncomenda>()
+            .HasOne(i => i.Encomenda)
+            .WithMany(e => e.Itens)
+            .HasForeignKey(i => i.EncomendaId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Relacionamento ItemEncomenda - Produto
+        modelBuilder.Entity<ItemEncomenda>()
+            .HasOne(i => i.Produto)
+            .WithMany()
+            .HasForeignKey(i => i.ProdutoId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
+}
