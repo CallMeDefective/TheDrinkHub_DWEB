@@ -111,7 +111,6 @@ namespace TheDrinkHub_DWEB.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Volta para a view passando o model para mostrar erros
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var itens = await _context.CarrinhoItens
                     .Include(ci => ci.Produto)
@@ -123,16 +122,63 @@ namespace TheDrinkHub_DWEB.Controllers
             }
 
             var userIdFinal = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var itensFinal = await _context.CarrinhoItens.Where(ci => ci.UserId == userIdFinal).ToListAsync();
+            var itensFinal = await _context.CarrinhoItens
+                .Include(ci => ci.Produto)
+                .Where(ci => ci.UserId == userIdFinal)
+                .ToListAsync();
 
-            // Aqui simular processamento do pagamento (cartão, validade, cvv)
+            if (!itensFinal.Any())
+            {
+                ModelState.AddModelError("", "O carrinho está vazio.");
+                return View("Checkout", model);
+            }
 
+            // Criar nova encomenda
+            var encomenda = new Encomenda
+            {
+                Id = Guid.NewGuid(),
+                UtilizadorId = userIdFinal,
+                DataEncomenda = DateTime.Now,
+                Estado = "Pendente",
+                Total = itensFinal.Sum(i => i.Produto.Preco * i.Quantidade),
+                Itens = new List<ItemEncomenda>()
+            };
+
+            // Processa cada item do carrinho
+            foreach (var item in itensFinal)
+            {
+                if (item.Quantidade > item.Produto.Stock)
+                {
+                    ModelState.AddModelError("", $"Stock insuficiente para o produto {item.Produto.Nome}.");
+                    ViewBag.Total = itensFinal.Sum(i => i.Produto.Preco * i.Quantidade);
+                    return View("Checkout", model);
+                }
+
+                // Adiciona item à encomenda
+                encomenda.Itens.Add(new ItemEncomenda
+                {
+                    Id = Guid.NewGuid(),
+                    EncomendaId = encomenda.Id,
+                    ProdutoId = item.ProdutoId,
+                    Quantidade = item.Quantidade,
+                    PrecoUnitario = item.Produto.Preco
+                });
+
+                // Diminui stock
+                item.Produto.Stock -= item.Quantidade;
+                _context.Produtos.Update(item.Produto);
+            }
+
+            // Adiciona encomenda e remove itens do carrinho
+            _context.Encomendas.Add(encomenda);
             _context.CarrinhoItens.RemoveRange(itensFinal);
+
             await _context.SaveChangesAsync();
 
-            TempData["Mensagem"] = "Pagamento efetuado com sucesso!";
+            TempData["Mensagem"] = "Pagamento efetuado e encomenda criada com sucesso!";
             return RedirectToAction("Index", "Home");
         }
+
 
 
         [Authorize]

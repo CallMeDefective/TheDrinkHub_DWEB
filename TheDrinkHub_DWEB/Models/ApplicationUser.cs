@@ -36,4 +36,6 @@ public class ApplicationUser : IdentityUser
     [Required(ErrorMessage = "A morada é obrigatória.")]
     [StringLength(200, ErrorMessage = "A morada não pode ter mais de 200 caracteres.")]
     public string Morada { get; set; }
+
+    public ICollection<Encomenda> Encomendas { get; set; } = new HashSet<Encomenda>();
 }
