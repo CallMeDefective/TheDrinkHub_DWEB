@@ -1,6 +1,7 @@
 ﻿@model List<TheDrinkHub_DWEB.Models.CarrinhoItem>
 
 @{
+    Layout = "~/Views/Home/LayoutMain.cshtml";
     ViewData["Title"] = "Carrinho";
     var total = ViewBag.Total ?? 0;
 }
@@ -18,18 +19,26 @@
             @foreach (var item in Model)
             {
                 <div class="flex items-center justify-between border p-4 rounded shadow">
+                    <!-- Imagem + Info -->
                     <div class="flex items-center space-x-4">
-                        <img src="@item.Produto.ImagemUrl" alt="@item.Produto.Nome" class="w-16 h-16 object-cover rounded" />
+                        <img src="@item.Produto.ImagemUrl" alt="@item.Produto.Nome"
+                             style="width: 48px; height: 48px; object-fit: contain; border-radius: 6px;" />
                         <div>
                             <div class="font-semibold">@item.Produto.Nome</div>
                             <div class="text-sm text-gray-500">Quantidade: @item.Quantidade</div>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-6">
-                        <div class="text-lg font-bold">@((item.Produto.Preco * item.Quantidade).ToString("0.00"))€</div>
+
+                    <!-- Preço + Botão -->
+                    <div class="flex items-center gap-4">
+                        <div class="text-lg font-bold whitespace-nowrap">
+                            @((item.Produto.Preco * item.Quantidade).ToString("0.00"))€
+                        </div>
                         <form asp-action="Remover" method="post" asp-route-id="@item.Id">
-                            <button type="submit" class="text-red-600 hover:text-red-800 text-xl">
+                            <button type="submit"
+                                    class="flex items-center gap-2 bg-red-100 text-red-600 px-3 py-1 rounded hover:bg-red-200 transition whitespace-nowrap">
                                 <i class="fas fa-trash-alt"></i>
+                                <span class="text-sm">Remover</span>
                             </button>
                         </form>
                     </div>
@@ -41,8 +50,9 @@
             Total: @((total as decimal?)?.ToString("0.00"))€
         </div>
 
-        <button type="button" onclick="window.location.href='@Url.Action("Checkout", "Carrinho")'"
-                class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition">
+        <button type="button"
+                onclick="window.location.href='@Url.Action("Checkout", "Carrinho")'"
+                class="mt-4 w-full bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition">
             Pagar
         </button>
     }

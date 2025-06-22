@@ -15,56 +15,55 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 </head>
 <body class="bg-gray-50">
-<!-- Conteúdo -->
-<div class="pt-20 container mx-auto px-4 py-8">
-    <h2 class="text-3xl font-bold text-center mb-8 text-red-600">@nomeCategoria</h2>
+    <!-- Conteúdo -->
+    <div class="pt-20 container mx-auto px-4 py-8">
+        <h2 class="text-3xl font-bold text-center mb-8 text-red-600">@nomeCategoria</h2>
 
-    @if (!Model.Any())
-    {
-        <p class="text-center text-gray-500">Sem produtos disponíveis nesta categoria.</p>
-    }
-    else
-    {
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            @foreach (var produto in Model)
-            {
-                <div class="bg-white shadow-md rounded-lg overflow-hidden">
-                    <img src="@produto.ImagemUrl" alt="@produto.Nome" class="w-full h-48 object-contain mx-auto">
-                    <div class="p-4">
-                        <h3 class="text-lg font-semibold mb-2">@produto.Nome</h3>
+        @if (!Model.Any())
+        {
+            <p class="text-center text-gray-500">Sem produtos disponíveis nesta categoria.</p>
+        }
+        else
+        {
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                @foreach (var produto in Model)
+                {
+                    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                        <img src="@produto.ImagemUrl" alt="@produto.Nome" class="w-full h-48 object-contain mx-auto">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold mb-2">@produto.Nome</h3>
 
-                        <div class="flex items-center space-x-2 mt-2">
-                            <input type="text" class="border rounded p-1 w-20" value="1" id="quantidade"
-                                   min="1" max="@produto.Stock" oninput="validateInput(this)" />
+                            <form asp-controller="Carrinho" asp-action="Adicionar" method="post" class="flex items-center space-x-2 mt-2">
+                                <input type="hidden" name="produtoId" value="@produto.Id" />
+
+                                <input type="number" name="quantidade" class="border rounded p-1 w-20"
+                                       value="1" min="1" max="@produto.Stock" oninput="validateInput(this)" />
+
+                                <button type="submit" class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 transition flex-grow">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </form>
 
                             <script>
                                 function validateInput(input) {
-                                    // Remover qualquer caractere que não seja número
                                     input.value = input.value.replace(/[^0-9]/g, '');
 
-                                    // Garantir que o valor não seja menor que o mínimo
                                     if (parseInt(input.value) < parseInt(input.min)) {
-                                        input.value = input.min;  // Forçar o valor para o mínimo
+                                        input.value = input.min;
                                     }
 
-                                    // Garantir que o valor não ultrapasse o máximo
                                     if (parseInt(input.value) > parseInt(input.max)) {
-                                        input.value = input.max;  // Forçar o valor para o máximo
+                                        input.value = input.max;
                                     }
                                 }
                             </script>
 
-                            <button class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700 transition flex-grow">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
                         </div>
-
                     </div>
-                </div>
-            }
-        </div>
-    }
-</div>
+                }
+            </div>
+        }
+    </div>
 
 </body>
 </html>

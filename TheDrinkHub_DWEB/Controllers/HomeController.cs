@@ -6,6 +6,7 @@ using System.Text.Json;
 using TheDrinkHub_DWEB.Views.Home;
 using Microsoft.AspNetCore.Authorization;
 using TheDrinkHub_DWEB.Models.ViewModels;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace TheDrinkHub_DWEB.Controllers
 {
@@ -106,7 +107,8 @@ namespace TheDrinkHub_DWEB.Controllers
                 Nome = user.Nome,
                 DataNascimento = user.DataNascimento,
                 Nif = user.Nif,
-                Morada = user.Morada
+                Morada = user.Morada,
+                Email = user.Email
             };
 
             return View(model);
@@ -125,24 +127,39 @@ namespace TheDrinkHub_DWEB.Controllers
             if (user == null)
                 return NotFound();
 
+            // Atualizar campos básicos
             user.Nome = model.Nome;
             user.DataNascimento = model.DataNascimento;
             user.Nif = model.Nif;
             user.Morada = model.Morada;
 
-            var result = await _userManager.UpdateAsync(user);
-
-            if (result.Succeeded)
+            // Atualizar Email se mudou
+            if (user.Email != model.Email)
             {
-                TempData["Sucesso"] = "Perfil atualizado com sucesso!";
-                return RedirectToAction("PerfilMain");
+                var setEmailResult = await _userManager.SetEmailAsync(user, model.Email);
+                if (!setEmailResult.Succeeded)
+                {
+                    foreach (var error in setEmailResult.Errors)
+                        ModelState.AddModelError("", error.Description);
+                    return View(model);
+                }
+                user.UserName = model.Email; // manter UserName sincronizado
             }
 
-            foreach (var error in result.Errors)
-                ModelState.AddModelError("", error.Description);
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                foreach (var error in updateResult.Errors)
+                    ModelState.AddModelError("", error.Description);
+                return View(model);
+            }
 
-            return View(model);
+            await _signInManager.RefreshSignInAsync(user);
+
+            TempData["Sucesso"] = "Perfil atualizado com sucesso!";
+            return RedirectToAction("PerfilMain");
         }
+
 
         // POST - Login
         [HttpPost]

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using TheDrinkHub_DWEB.Models;
 using Microsoft.AspNetCore.Authorization;
+using TheDrinkHub_DWEB.Models.ViewModels;
 
 namespace TheDrinkHub_DWEB.Controllers
 {
@@ -106,20 +107,35 @@ namespace TheDrinkHub_DWEB.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> FinalizarPagamento(string Cartao, string Validade, string CVV)
+        public async Task<IActionResult> FinalizarPagamento(CheckoutViewModel model)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var itens = await _context.CarrinhoItens.Where(ci => ci.UserId == userId).ToListAsync();
+            if (!ModelState.IsValid)
+            {
+                // Volta para a view passando o model para mostrar erros
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var itens = await _context.CarrinhoItens
+                    .Include(ci => ci.Produto)
+                    .Where(ci => ci.UserId == userId)
+                    .ToListAsync();
 
-            // Aqui validar e processar pagamento...
+                ViewBag.Total = itens.Sum(i => i.Produto.Preco * i.Quantidade);
+                return View("Checkout", model);
+            }
 
-            _context.CarrinhoItens.RemoveRange(itens);
+            var userIdFinal = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var itensFinal = await _context.CarrinhoItens.Where(ci => ci.UserId == userIdFinal).ToListAsync();
+
+            // Aqui simular processamento do pagamento (cartão, validade, cvv)
+
+            _context.CarrinhoItens.RemoveRange(itensFinal);
             await _context.SaveChangesAsync();
 
             TempData["Mensagem"] = "Pagamento efetuado com sucesso!";
             return RedirectToAction("Index", "Home");
         }
 
+
+        [Authorize]
         [Authorize]
         public async Task<IActionResult> Checkout()
         {
@@ -130,8 +146,11 @@ namespace TheDrinkHub_DWEB.Controllers
                 .ToListAsync();
 
             ViewBag.Total = itens.Sum(i => i.Produto.Preco * i.Quantidade);
-            return View(itens);
+
+            var model = new CheckoutViewModel();
+            return View(model);
         }
+
 
     }
 }

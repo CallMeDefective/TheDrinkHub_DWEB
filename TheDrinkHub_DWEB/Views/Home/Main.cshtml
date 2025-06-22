@@ -80,43 +80,36 @@
     <h2 class="text-2xl font-bold text-center mb-4">Produtos Disponíveis</h2>
     <div class="flex space-x-4 overflow-x-auto pb-4">
         @{ var count = 0; }
-        @foreach (Produto produto in Model)
-        {
-            if (produto.Stock > 0)
+            @foreach (Produto produto in Model)
             {
-                count++;
-                <div class="flex-shrink-0 w-48 bg-white shadow rounded-lg p-4 text-center">
-                    <img src="@produto.ImagemUrl" alt="@produto.Nome" class="w-full h-40 object-cover rounded mb-2">
-                    <div class="text-lg font-semibold">@produto.Nome</div>
-                        <form asp-controller="Carrinho" asp-action="Adicionar" method="post">
-                            <script>
-                                function validateInput(input) {
-                                    // Remover qualquer caractere que não seja número
-                                    input.value = input.value.replace(/[^0-9]/g, '');
+                if (produto.Stock > 0)
+                {
+                    count++; 
+                    <div class="flex-shrink-0 w-48 bg-white shadow rounded-lg p-4 text-center">
+                        <img src="@produto.ImagemUrl" alt="@produto.Nome" class="w-full h-40 object-cover rounded mb-2" />
+                        <div class="text-lg font-semibold">@produto.Nome</div>
 
-                                    // Garantir que o valor não seja menor que o mínimo
-                                    if (parseInt(input.value) < parseInt(input.min)) {
-                                        input.value = input.min;  // Forçar o valor para o mínimo
-                                    }
-
-                                    // Garantir que o valor não ultrapasse o máximo
-                                    if (parseInt(input.value) > parseInt(input.max)) {
-                                        input.value = input.max;  // Forçar o valor para o máximo
-                                    }
-                                }
-                            </script>
-                            <input type="hidden" name="produtoId" value="@produto.Id" />
-
-                            <input type="number" name="quantidade" class="border rounded p-1 w-20"
-                                   value="1" min="1" max="@produto.Stock" oninput="validateInput(this)" />
-
-                            <button type="submit" class="bg-blue-600 text-white p-2 rounded mt-2 text-sm w-full">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <form asp-controller="Carrinho" asp-action="Adicionar" method="post">
+                                <input type="hidden" name="produtoId" value="@produto.Id" />
+                                <input type="number" name="quantidade" class="border rounded p-1 w-20"
+                                       value="1" min="1" max="@produto.Stock" oninput="validateInput(this)" />
+                                <button type="submit" class="bg-blue-600 text-white p-2 rounded mt-2 text-sm w-full">
+                                    <i class="fas fa-cart-plus"></i> Adicionar
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button type="button" onclick="alert('Tem de fazer login para adicionar produtos ao carrinho.'); window.location.href='@Url.Action("LoginMain", "Home")';"
+                                    class="bg-blue-600 text-white p-2 rounded mt-2 text-sm w-full">
                                 <i class="fas fa-cart-plus"></i> Adicionar
                             </button>
-                        </form>
-                </div>
+                        }
+                    </div>
+                }
             }
-        }
         @if (count == 0)
         {
             <span style="text-align: center !important;">Sem produtos disponíveis</span>
