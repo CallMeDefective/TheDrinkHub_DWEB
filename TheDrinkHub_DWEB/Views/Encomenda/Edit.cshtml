@@ -38,6 +38,36 @@
             </div>
         </form>
     </div>
+    <h4>Itens da Encomenda</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Preço Unitário</th>
+                <th>Quantidade</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Itens.Count; i++)
+            {
+                var item = Model.Itens.ElementAt(i);
+                <tr>
+                    <td>
+                        @item.Produto.Nome
+                        <input type="hidden" name="Itens[@i].ProdutoId" value="@item.ProdutoId" />
+                        <input type="hidden" name="Itens[@i].Id" value="@item.Id" />
+                    </td>
+                    <td>
+                        @item.PrecoUnitario.ToString("C")
+                        <input type="hidden" name="Itens[@i].PrecoUnitario" value="@item.PrecoUnitario" />
+                    </td>
+                    <td>
+                        <input type="number" name="Itens[@i].Quantidade" value="@item.Quantidade" class="form-control" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
 <div>
