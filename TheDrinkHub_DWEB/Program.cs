@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TheDrinkHub_DWEB.Data;
 using TheDrinkHub_DWEB.Models;
+using TheDrinkHub_DWEB.Seeds;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,7 @@ builder.Services.AddRazorPages();
 
 // Configurar o DbContext com SQLite
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configurar Identity com suporte a roles
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -56,6 +57,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var context = services.GetRequiredService<ApplicationDbContext>();
 
     // Criate ROle Admin if doesn't exist
     var roleExists = await roleManager.RoleExistsAsync("Admin");
@@ -87,6 +89,26 @@ using (var scope = app.Services.CreateScope())
             await userManager.AddToRoleAsync(user, "Admin");
         }
     }
+    var userEmail = "cliente@thedrinkhub.pt";
+    var normalUser = await userManager.FindByEmailAsync(userEmail);
+
+    if (normalUser == null)
+    {
+        var user = new ApplicationUser
+        {
+            UserName = userEmail,
+            Email = userEmail,
+            EmailConfirmed = true,
+            Nome = "Cliente Normal",
+            DataNascimento = new DateTime(2000, 5, 10),
+            Nif = "987654321",
+            Morada = "Rua do Cliente"
+        };
+
+        await userManager.CreateAsync(user, "Cliente123!");
+    }
+    await DbSeeder.SeedAsync(context);
 }
+
 
 app.Run();
