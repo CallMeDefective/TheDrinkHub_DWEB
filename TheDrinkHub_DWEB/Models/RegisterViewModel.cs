@@ -12,6 +12,8 @@ public class RegisterViewModel
 
     [Required]
     [DataType(DataType.Password)]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$",
+    ErrorMessage = "A password deve ter pelo menos 6 caracteres, incluindo maiúsculas, minúsculas, números e símbolos.")]
     public string Password { get; set; }
 
     [Required]
