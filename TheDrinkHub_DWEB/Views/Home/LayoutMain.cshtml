@@ -4,17 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"] - The Drink Hub</title>
-    
+
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 
     <style>
-        .carousel-inner { display: flex; transition: transform 0.5s ease-in-out; }
-        .carousel-item { min-width: 100%; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
-        .carousel-item img { width: 100%; height: auto; max-height: 600px; object-fit: cover; }
-        .carousel-control { position: absolute; top: 50%; transform: translateY(-50%); background-color: rgba(0, 0, 0, 0.5); color: white; padding: 10px; cursor: pointer; font-size: 2rem; z-index: 10; }
-        .carousel-control-left { left: 10px; }
-        .carousel-control-right { right: 10px; }
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .carousel-item img {
+                width: 100%;
+                height: auto;
+                max-height: 600px;
+                object-fit: cover;
+            }
+
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 2rem;
+            z-index: 10;
+        }
+
+        .carousel-control-left {
+            left: 10px;
+        }
+
+        .carousel-control-right {
+            right: 10px;
+        }
     </style>
 </head>
 <body class="relative">
@@ -53,13 +86,15 @@
             The Drink Hub
         </a>
         <div class="text-white flex items-center space-x-4">
+            <button onclick="toggleDevModal()" class="bg-white text-red-600 px-3 py-1 rounded font-semibold hover:bg-gray-100 transition">
+                Info Devs
+            </button>
             @if (User.IsInRole("Admin"))
             {
                 <a asp-controller="Home" asp-action="BO" class="bg-white text-red-600 px-3 py-1 rounded font-semibold hover:bg-gray-100 transition">
                     Backoffice
                 </a>
             }
-
             @if (User.Identity.IsAuthenticated)
             {
                 <a asp-controller="Carrinho" asp-action="Index" class="relative">
@@ -75,7 +110,6 @@
                 </a>
             }
 
-
             @if (User.Identity.IsAuthenticated)
             {
                 <a asp-controller="Home" asp-action="PerfilMain">
@@ -86,16 +120,37 @@
             {
                 <a asp-controller="Home" asp-action="LoginMain">
                     <i class="fas fa-user-circle text-2xl"></i>
-                </a> 
+                </a>
             }
-            
         </div>
-
     </nav>
 
     <!-- Conteúdo principal -->
     <div>
         @RenderBody()
+    </div>
+
+    <!-- Modal Desenvolvedores -->
+    <div id="devModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg relative">
+            <h2 class="text-xl font-bold mb-4 text-red-600 text-center">Desenvolvedores do projeto</h2>
+
+            <div class="space-y-3">
+                <div>
+                    <p><strong>Nome:</strong> Miguel Pereira</p>
+                    <p><strong>Número:</strong> 22116</p>
+                    <p><strong>Email:</strong> aluno22116@ipt.pt</p>
+                </div>
+                <hr />
+                <div>
+                    <p><strong>Nome:</strong> Pedro Cortesão</p>
+                    <p><strong>Número:</strong> 2</p>
+                    <p><strong>Email:</strong> </p>
+                </div>
+            </div>
+
+            <button onclick="toggleDevModal()" class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl">&times;</button>
+        </div>
     </div>
 
     <!-- Scripts -->
@@ -112,9 +167,14 @@
                 overlay.classList.remove('hidden');
             }
         }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
 
+        function toggleDevModal() {
+            const modal = document.getElementById("devModal");
+            modal.classList.toggle("hidden");
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
     <script>
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/carthub")
